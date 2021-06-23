@@ -7,7 +7,10 @@
 
 int main() {
     WINDOW *card_windows[9]; 
+    char cards[27][CARD_H][CARD_W];
     int wrows, wcols, gamew, gameh, tlcornerx, tlcornery;
+
+    load_cards(cards, "assets/cards.txt");
 
     initscr();
     noecho();
@@ -30,11 +33,29 @@ int main() {
     tlcornery = (wrows - gameh) / 2;
     for (int i=0; i<9; i++) {
       card_windows[i] = newwin(CARD_H, CARD_W, tlcornery + (i % 3) * (CARD_H + 1), tlcornerx + (i / 3) * (CARD_W + 1));
-      draw_card(card_windows[i], 1, dummy);
     }
-    wgetch(dummy);
 
+    // Draw all 27 cards in succession
+    for (int j=0; j<9; j++) {
+      draw_card(card_windows[j], cards[j], dummy);
+    }
+    while(1){
+      for (int i=0; i<9; i++) {
+        draw_card(card_windows[i], cards[i], dummy);
+      }
+      if(wgetch(dummy) == 'q') break;
 
+      for (int i=9; i<18; i++) {
+        draw_card(card_windows[i % 9], cards[i], dummy);
+      }
+      if(wgetch(dummy) == 'q') break;
+
+      for (int i=18; i<27; i++) {
+        draw_card(card_windows[i % 9], cards[i], dummy);
+      }
+      if(wgetch(dummy) == 'q') break;
+
+    }
     endwin();
     return EXIT_SUCCESS;
 }
