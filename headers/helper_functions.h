@@ -3,7 +3,7 @@
 #include <ncurses.h>
 #include "structs.h"
 
-void draw_card(wloc* ga, WINDOW* dummy);
-wloc* get_game_area(WINDOW* w);
+void load_cards(char **cards, char *filename);
+void draw_card(WINDOW *card_window, int card, WINDOW *dummy);
 
 #endif
