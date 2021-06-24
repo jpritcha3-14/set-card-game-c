@@ -24,9 +24,25 @@ void load_cards(char cards[][CARD_H][CARD_W], char* filename) {
 }
 
 void draw_card(WINDOW *card_window, char card[][CARD_W], WINDOW *dummy) {
-    attron(COLOR_PAIR(2));
-    for (int i=0; i<CARD_H; i++) {
-      mvwaddstr(card_window, i, 0, card[i]);
+  wattron(card_window, COLOR_PAIR(2));
+  for (int i=0; i<CARD_H; i++) {
+    mvwaddstr(card_window, i+1, 1, card[i]);
+  }
+  wrefresh(card_window); // flush to screen
+}
+
+void draw_border(WINDOW *card_window, char ch) {
+  for (int i=0; i<CARD_H+2; i++) {
+    if (i == 0 || i == CARD_H+1) {
+      // Top and bottom
+      for (int j=0; j<CARD_W+2; j++) {
+        mvwaddch(card_window, i, j, ch);
+      }
+    } else {
+      // Left and right
+      mvwaddch(card_window, i, 0, ch); 
+      mvwaddch(card_window, i, CARD_W+1, ch); 
     }
-    wrefresh(card_window); // flush to screen
+  }
+  wrefresh(card_window); // flush to screen
 }
