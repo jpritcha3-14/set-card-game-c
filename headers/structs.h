@@ -1,7 +1,7 @@
 #ifndef STRUCT_HEADER
 #define STRUCT_HEADER
 
-#define CARD_W 20 
+#define CARD_W 19 
 #define CARD_H 7 
 enum direction{North, South, East, West};
 
