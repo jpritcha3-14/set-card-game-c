@@ -7,7 +7,7 @@
 #include "set.h"
 
 int main() {
-    WINDOW *card_windows[9]; 
+    WINDOW *card_windows[12];
     char cards[27][CARD_H][CARD_W];
     int wrows, wcols, gamew, gameh, tlcornerx, tlcornery;
 
@@ -22,8 +22,10 @@ int main() {
     curs_set(0);
     init_pair(1, COLOR_GREEN, COLOR_BLACK);
     init_pair(2, COLOR_RED, COLOR_BLACK);
+    init_pair(3, COLOR_BLUE, COLOR_BLACK);
+    init_pair(4, COLOR_YELLOW, COLOR_BLACK);
 
-    gamew = (CARD_W + 2) * 3;
+    gamew = (CARD_W + 2) * 4;
     gameh = (CARD_H + 2) * 3;
     getmaxyx(stdscr, wrows, wcols);
     if (wrows < gameh || wcols < gamew) {
@@ -32,12 +34,14 @@ int main() {
     };
     tlcornerx = (wcols - gamew) / 2;
     tlcornery = (wrows - gameh) / 2;
-    for (int i=0; i<9; i++) {
-      card_windows[i] = newwin(CARD_H+2, CARD_W+2, tlcornery + (i / 3) * (CARD_H + 2), tlcornerx + (i % 3) * (CARD_W + 2));
+    //tlcornery = 5;
+    fprintf(stderr, "%d %d\n", tlcornerx, tlcornery);
+    for (int i=0; i<12; i++) {
+      card_windows[i] = newwin(CARD_H+2, CARD_W+2, tlcornery + (i / 4) * (CARD_H + 2), tlcornerx + (i % 4) * (CARD_W + 2));
     }
 
     // Draw all 27 cards in succession
-    for (int j=0; j<9; j++) {
+    for (int j=0; j<12; j++) {
       //draw_border(card_windows[j], '!');
       draw_card(card_windows[j], cards[j], dummy);
     }

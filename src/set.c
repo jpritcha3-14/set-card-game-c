@@ -8,18 +8,19 @@ int play_game(WINDOW *card_windows[], char cards[][CARD_H][CARD_W], WINDOW *dumm
   int prev_card = 0;
   char inp;
   while (1) {
+    wattron(card_windows[cur_card], COLOR_PAIR(3));
     draw_border(card_windows[prev_card], ' ');
     draw_border(card_windows[cur_card], '!');
     wrefresh(card_windows[cur_card]);
     inp = wgetch(dummy);
     prev_card = cur_card;
-    if (inp == 'w' && cur_card > 2) {
-      cur_card -= 3;
-    } else if (inp == 'a' && cur_card % 3 != 0) {
+    if (inp == 'w' && cur_card > 3) {
+      cur_card -= 4;
+    } else if (inp == 'a' && cur_card % 4 != 0) {
       cur_card -= 1;
-    } else if (inp == 's' && cur_card < 6) {
-      cur_card += 3;
-    } else if (inp == 'd' && cur_card % 3 != 2) {
+    } else if (inp == 's' && cur_card < 8) {
+      cur_card += 4;
+    } else if (inp == 'd' && cur_card % 4 != 3) {
       cur_card += 1;
     } else if (inp == 'q') {
       break;  

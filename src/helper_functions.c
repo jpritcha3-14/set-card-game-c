@@ -16,8 +16,8 @@ void load_cards(char cards[][CARD_H][CARD_W], char* filename) {
       // move fp past newline
       fgets(garbage, CARD_W, fp);   
 
-      fprintf(stderr, cards[i][j]);
-      fprintf(stderr, "\n");
+      //fprintf(stderr, cards[i][j]);
+      //fprintf(stderr, "\n");
     } 
   }
   fclose(fp);
