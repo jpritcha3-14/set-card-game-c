@@ -4,6 +4,7 @@
 
 #include "helper_functions.h" 
 #include "structs.h"
+#include "set.h"
 
 int main() {
     WINDOW *card_windows[9]; 
@@ -35,14 +36,13 @@ int main() {
       card_windows[i] = newwin(CARD_H+2, CARD_W+2, tlcornery + (i / 3) * (CARD_H + 2), tlcornerx + (i % 3) * (CARD_W + 2));
     }
 
-
     // Draw all 27 cards in succession
     for (int j=0; j<9; j++) {
-      draw_border(card_windows[j], '!');
+      //draw_border(card_windows[j], '!');
       draw_card(card_windows[j], cards[j], dummy);
     }
-    
-    wgetch(dummy);
+   
+    play_game(card_windows, cards, dummy);
     endwin();
     return EXIT_SUCCESS;
 }
