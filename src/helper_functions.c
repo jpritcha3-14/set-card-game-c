@@ -46,3 +46,49 @@ void draw_border(WINDOW *card_window, char ch) {
   }
   wrefresh(card_window); // flush to screen
 }
+
+int move_cursor(WINDOW* card_windows[], int selected[], int inp, int cur_card) {
+  int next_card;
+  if (inp == 'w' && cur_card > 3) {
+    next_card = cur_card - 4;
+  } else if (inp == 'a' && cur_card % 4 != 0) {
+    next_card = cur_card - 1;
+  } else if (inp == 's' && cur_card < 8) {
+    next_card = cur_card + 4;
+  } else if (inp == 'd' && cur_card % 4 != 3) {
+    next_card = cur_card + 1;
+  } else {
+    return cur_card;
+  }
+  
+  // Do these steps only if the cursor was actually moved
+  if (selected[next_card]) {
+    wattron(card_windows[next_card], COLOR_PAIR(2));
+  } else {
+    wattron(card_windows[next_card], COLOR_PAIR(1));
+  }
+  draw_border(card_windows[next_card], '!');
+
+  if (selected[cur_card]) {
+    wattron(card_windows[cur_card], COLOR_PAIR(2));
+    draw_border(card_windows[cur_card], '*');
+  } else {
+    wattron(card_windows[cur_card], COLOR_PAIR(1));
+    draw_border(card_windows[cur_card], ' ');
+  }
+  wrefresh(card_windows[cur_card]);
+  wrefresh(card_windows[next_card]);
+  return next_card;  
+}
+
+void select_card(WINDOW *card_window, int selected[], int cur_card) {
+  if (selected[cur_card]) {
+    selected[cur_card] = 0; 
+    wattron(card_window, COLOR_PAIR(1));
+  } else {
+    selected[cur_card] = 1; 
+    wattron(card_window, COLOR_PAIR(2));
+  }
+  draw_border(card_window, '!');
+  wrefresh(card_window);
+}
