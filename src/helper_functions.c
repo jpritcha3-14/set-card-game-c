@@ -3,6 +3,14 @@
 
 #include "structs.h"
 
+int sum(int arr[], int n) {
+  int total = 0;
+  for (int i=0; i<n; i++) {
+    total += arr[i];
+  }
+  return total;
+}
+
 void load_cards(char cards[][CARD_H][CARD_W], char* filename) {
   FILE* fp;
   char garbage[10];
@@ -87,8 +95,10 @@ void select_card(WINDOW *card_window, int selected[], int cur_card) {
     selected[cur_card] = 0; 
     wattron(card_window, COLOR_PAIR(WHITE));
   } else {
-    selected[cur_card] = 1; 
-    wattron(card_window, COLOR_PAIR(YELLOW));
+    if (sum(selected, 12) < 3) {
+      selected[cur_card] = 1;
+      wattron(card_window, COLOR_PAIR(YELLOW));
+    }
   }
   draw_border(card_window, '@', '@');
   wrefresh(card_window);
