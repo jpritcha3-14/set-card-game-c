@@ -1,6 +1,7 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #include "helper_functions.h" 
 #include "structs.h"
@@ -10,6 +11,7 @@ int main() {
     WINDOW *card_windows[12];
     char cards[27][CARD_H][CARD_W];
     int wrows, wcols, gamew, gameh, tlcornerx, tlcornery;
+    srand(time(0));
 
     load_cards(cards, "assets/cards.txt");
 
@@ -20,10 +22,13 @@ int main() {
     WINDOW* dummy = newwin(1, 1, 1000, 1000); 
     keypad(dummy, true);
     curs_set(0);
-    init_pair(1, COLOR_GREEN, COLOR_BLACK);
-    init_pair(2, COLOR_RED, COLOR_BLACK);
-    init_pair(3, COLOR_BLUE, COLOR_BLACK);
-    init_pair(4, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(WHITE, COLOR_WHITE, COLOR_BLACK);
+    init_pair(CYAN, COLOR_CYAN, COLOR_BLACK);
+    init_pair(MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(RED, COLOR_RED, COLOR_BLACK);
+    init_pair(GREEN, COLOR_GREEN, COLOR_BLACK);
+    init_pair(BLUE, COLOR_BLUE, COLOR_BLACK);
+    init_pair(YELLOW, COLOR_YELLOW, COLOR_BLACK);
 
     gamew = (CARD_W + 2) * 4;
     gameh = (CARD_H + 2) * 3;
@@ -38,12 +43,6 @@ int main() {
     fprintf(stderr, "%d %d\n", tlcornerx, tlcornery);
     for (int i=0; i<12; i++) {
       card_windows[i] = newwin(CARD_H+2, CARD_W+2, tlcornery + (i / 4) * (CARD_H + 2), tlcornerx + (i % 4) * (CARD_W + 2));
-    }
-
-    // Draw all 27 cards in succession
-    for (int j=0; j<12; j++) {
-      //draw_border(card_windows[j], '!');
-      draw_card(card_windows[j], cards[j], dummy);
     }
    
     play_game(card_windows, cards, dummy);
