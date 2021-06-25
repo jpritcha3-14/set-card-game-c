@@ -32,6 +32,18 @@ int get_color(int card_number) {
   return card_number / 27 + 1;
 }
 
+int get_number(int card_number) {
+  return (card_number % 3) + 1;
+}
+
+int get_shade(int card_number) {
+  return (card_number / 9) % 3;
+}
+
+int get_shape(int card_number) {
+  return (card_number % 9) / 3;
+}
+
 void draw_card(WINDOW *card_window, char card[][CARD_W], int card_number) {
   wattron(card_window, COLOR_PAIR(get_color(card_number)));
   for (int i=0; i<CARD_H; i++) {

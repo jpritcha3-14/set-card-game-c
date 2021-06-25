@@ -11,5 +11,8 @@ void select_card(WINDOW *card_window, int slected[], int cur_card);
 
 void shuffle(int cards[], int n);
 int get_color(int card_number);
+int get_number(int card_number);
+int get_shade(int card_number);
+int get_shape(int card_number);
 
 #endif
