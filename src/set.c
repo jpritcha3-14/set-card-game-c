@@ -20,10 +20,12 @@ int play_game(WINDOW *card_windows[], char cards[][CARD_H][CARD_W], WINDOW *dumm
     props[i].shape = get_shape(i); 
     //fprintf(stderr, "%d %d %d %d\n", props[i].color, props[i].number, props[i].shade, props[i].shape);
   }
+
   shuffle(deck, 81);
 
+  // Draw first 12 cards
   for (int i=0; i<12; i++) {  
-    draw_card(card_windows[i], cards[deck[i] % 27], deck[i]);
+    draw_card(card_windows[i], cards[deck[i] % 27], props[deck[i]].color);
   }
 
   // draw cursor start
@@ -31,11 +33,20 @@ int play_game(WINDOW *card_windows[], char cards[][CARD_H][CARD_W], WINDOW *dumm
   draw_border(card_windows[cur_card], '@', '@');
   wrefresh(card_windows[cur_card]);
 
-  while (1) {
+  for (;;) {
     inp = wgetch(dummy);
     if (inp == 'q') break;
     if (inp == ' ') {
       select_card(card_windows[cur_card], selected, cur_card);
+      if (sum(selected, 12) == 3) {
+        int candidates[3];
+        get_selected_cards(candidates, selected);
+        if (check_set(candidates[0], candidates[1], candidates[2], deck, props) > 0)  {
+          fprintf(stderr, "THATS A SET!\n");
+        } else {
+          fprintf(stderr, "NOT A SET!\n");
+        }
+      }
     } else {
       prev_card = cur_card;
       cur_card = move_cursor(card_windows, selected, inp, prev_card);

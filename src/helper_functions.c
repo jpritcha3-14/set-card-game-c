@@ -44,8 +44,9 @@ int get_shape(int card_number) {
   return (card_number % 9) / 3;
 }
 
-void draw_card(WINDOW *card_window, char card[][CARD_W], int card_number) {
-  wattron(card_window, COLOR_PAIR(get_color(card_number)));
+void draw_card(WINDOW *card_window, char card[][CARD_W], int color) {
+  wattron(card_window, COLOR_PAIR(color));
+  //fprintf(stderr, "%d\n", color);
   for (int i=0; i<CARD_H; i++) {
     mvwaddstr(card_window, i+1, 1, card[i]);
   }
@@ -125,3 +126,36 @@ void shuffle(int cards[], int n) {
   }
 }
 
+int check_set(int a, int b, int c, const int deck[], const card_props props[]) { 
+  const card_props *candidate_props[3];
+  candidate_props[0] = &props[deck[a]];
+  candidate_props[1] = &props[deck[b]];
+  candidate_props[2] = &props[deck[c]];
+  if (candidate_props[0]->color == candidate_props[1]->color && candidate_props[1]->color != candidate_props[2]->color) return 0;
+  if (candidate_props[1]->color == candidate_props[2]->color && candidate_props[2]->color != candidate_props[0]->color) return 0;
+  if (candidate_props[2]->color == candidate_props[0]->color && candidate_props[0]->color != candidate_props[1]->color) return 0;
+
+  if (candidate_props[0]->number == candidate_props[1]->number && candidate_props[1]->number != candidate_props[2]->number) return 0;
+  if (candidate_props[1]->number == candidate_props[2]->number && candidate_props[2]->number != candidate_props[0]->number) return 0;
+  if (candidate_props[2]->number == candidate_props[0]->number && candidate_props[0]->number != candidate_props[1]->number) return 0;
+
+  if (candidate_props[0]->shade == candidate_props[1]->shade && candidate_props[1]->shade != candidate_props[2]->shade) return 0;
+  if (candidate_props[1]->shade == candidate_props[2]->shade && candidate_props[2]->shade != candidate_props[0]->shade) return 0;
+  if (candidate_props[2]->shade == candidate_props[0]->shade && candidate_props[0]->shade != candidate_props[1]->shade) return 0;
+
+  if (candidate_props[0]->shape == candidate_props[1]->shape && candidate_props[1]->shape != candidate_props[2]->shape) return 0;
+  if (candidate_props[1]->shape == candidate_props[2]->shape && candidate_props[2]->shape != candidate_props[0]->shape) return 0;
+  if (candidate_props[2]->shape == candidate_props[0]->shape && candidate_props[0]->shape != candidate_props[1]->shape) return 0;
+
+  return 1;
+}
+
+void get_selected_cards(int candidates[], const int selected[]) {
+  int i = 0;
+  for (int j=0; j<12; j++) {
+    if (selected[j] > 0) {
+      candidates[i++] = j;
+      if (i >= 3) return;
+    } 
+  } 
+}
