@@ -5,6 +5,7 @@
 
 int play_game(WINDOW *card_windows[], char cards[][CARD_H][CARD_W], WINDOW *dummy) {
   int selected[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int max_card = 80; 
   int deck[81];
   card_props props[81];
   int cur_card = 0;
@@ -42,7 +43,18 @@ int play_game(WINDOW *card_windows[], char cards[][CARD_H][CARD_W], WINDOW *dumm
         int candidates[3];
         get_selected_cards(candidates, selected);
         if (check_set(candidates[0], candidates[1], candidates[2], deck, props) > 0)  {
-          fprintf(stderr, "THATS A SET!\n");
+          for (int i=0; i<3; i++) {
+            int card_loc = candidates[i];
+            swap(max_card - i, card_loc, deck); 
+            int card_num = deck[card_loc];
+            draw_card(card_windows[card_loc], cards[card_num % 27], props[card_num].color);
+            selected[card_loc] = 0;
+            draw_border(card_windows[card_loc], ' ', ' ');
+          }
+          wattron(card_windows[cur_card], COLOR_PAIR(WHITE));
+          draw_border(card_windows[cur_card], '@', '@');
+          max_card -= 3;
+          //fprintf(stderr, "THATS A SET!\n");
         } else {
           fprintf(stderr, "NOT A SET!\n");
         }

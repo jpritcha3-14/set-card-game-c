@@ -3,6 +3,12 @@
 
 #include "structs.h"
 
+void swap(int a, int b, int arr[]) {
+  int temp = arr[b];
+  arr[b] = arr[a];
+  arr[a] = temp;
+}
+
 int sum(int arr[], int n) {
   int total = 0;
   for (int i=0; i<n; i++) {

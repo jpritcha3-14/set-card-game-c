@@ -3,6 +3,7 @@
 #include <ncurses.h>
 #include "structs.h"
 
+void swap(int a, int b, int arr[]);
 void load_cards(char cards[][CARD_H][CARD_W], char *filename);
 void draw_card(WINDOW *card_window, char card[][CARD_W], int color);
 void draw_border(WINDOW *card_window, char top, char side);
