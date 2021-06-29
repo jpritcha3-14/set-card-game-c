@@ -3,7 +3,7 @@
 #include "helper_functions.h"
 #include "structs.h"
 
-int play_game(WINDOW *card_windows[], char cards[][CARD_H][CARD_W], WINDOW *dummy) {
+int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char cards[][CARD_H][CARD_W], WINDOW *dummy) {
   int selected[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int max_card = 80; 
   int deck[81];
@@ -33,6 +33,12 @@ int play_game(WINDOW *card_windows[], char cards[][CARD_H][CARD_W], WINDOW *dumm
   wattron(card_windows[cur_card], COLOR_PAIR(WHITE));
   draw_border(card_windows[cur_card], '@', '@');
   wrefresh(card_windows[cur_card]);
+
+  mvwaddstr(messages, 0, 0, "TEST TEST TEST");
+  mvwaddstr(set_count, 0, 0, "TEST TEST TEST");
+  wrefresh(messages);
+  wrefresh(set_count);
+
 
   for (;;) {
     inp = wgetch(dummy);

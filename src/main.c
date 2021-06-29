@@ -9,6 +9,7 @@
 
 int main() {
     WINDOW *card_windows[12];
+    WINDOW *messages, *set_count;
     char cards[27][CARD_H][CARD_W];
     int wrows, wcols, gamew, gameh, tlcornerx, tlcornery;
     srand(time(0));
@@ -39,13 +40,17 @@ int main() {
     };
     tlcornerx = (wcols - gamew) / 2;
     tlcornery = (wrows - gameh) / 2;
-    //tlcornery = 5;
-    fprintf(stderr, "%d %d\n", tlcornerx, tlcornery);
+    //fprintf(stderr, "%d %d\n", tlcornerx, tlcornery);
+    messages = newwin(1, 2*(CARD_W+2), tlcornery-1, tlcornerx);
+    set_count = newwin(1, CARD_W+2, tlcornery-1, tlcornerx + 3*(CARD_W+2));
+    wattron(messages, COLOR_PAIR(WHITE));
+    wattron(set_count, COLOR_PAIR(WHITE));
+
     for (int i=0; i<12; i++) {
       card_windows[i] = newwin(CARD_H+2, CARD_W+2, tlcornery + (i / 4) * (CARD_H + 2), tlcornerx + (i % 4) * (CARD_W + 2));
     }
    
-    play_game(card_windows, cards, dummy);
+    play_game(card_windows, messages, set_count, cards, dummy);
     endwin();
     return EXIT_SUCCESS;
 }
