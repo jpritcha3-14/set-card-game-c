@@ -17,6 +17,13 @@ int sum(int arr[], int n) {
   return total;
 }
 
+void clear_message(WINDOW* window, int length) {
+  for (int i=0; i<length; i++) {
+    mvwaddch(window, 0, i, ' ');
+  }
+  wrefresh(window);
+}
+
 void load_cards(char cards[][CARD_H][CARD_W], char* filename) {
   FILE* fp;
   char garbage[10];

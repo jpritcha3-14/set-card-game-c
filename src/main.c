@@ -41,8 +41,8 @@ int main() {
     tlcornerx = (wcols - gamew) / 2;
     tlcornery = (wrows - gameh) / 2;
     //fprintf(stderr, "%d %d\n", tlcornerx, tlcornery);
-    messages = newwin(1, 2*(CARD_W+2), tlcornery-1, tlcornerx);
-    set_count = newwin(1, CARD_W+2, tlcornery-1, tlcornerx + 3*(CARD_W+2));
+    messages = newwin(1, MESSAGE_W, tlcornery-1, tlcornerx);
+    set_count = newwin(1, SET_COUNT_W, tlcornery-1, tlcornerx + 3*(CARD_W+2));
     wattron(messages, COLOR_PAIR(WHITE));
     wattron(set_count, COLOR_PAIR(WHITE));
 

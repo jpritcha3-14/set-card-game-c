@@ -34,12 +34,6 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char 
   draw_border(card_windows[cur_card], '@', '@');
   wrefresh(card_windows[cur_card]);
 
-  mvwaddstr(messages, 0, 0, "TEST TEST TEST");
-  mvwaddstr(set_count, 0, 0, "TEST TEST TEST");
-  wrefresh(messages);
-  wrefresh(set_count);
-
-
   for (;;) {
     inp = wgetch(dummy);
     if (inp == 'q') break;
@@ -49,6 +43,9 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char 
         int candidates[3];
         get_selected_cards(candidates, selected);
         if (check_set(candidates[0], candidates[1], candidates[2], deck, props) > 0)  {
+          mvwaddstr(messages, 0, 0, "THAT'S A SET!");
+          wrefresh(messages);
+          wgetch(dummy);
           for (int i=0; i<3; i++) {
             int card_loc = candidates[i];
             swap(max_card - i, card_loc, deck); 
@@ -60,9 +57,19 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char 
           wattron(card_windows[cur_card], COLOR_PAIR(WHITE));
           draw_border(card_windows[cur_card], '@', '@');
           max_card -= 3;
-          //fprintf(stderr, "THATS A SET!\n");
+          clear_message(messages, MESSAGE_W);
         } else {
-          fprintf(stderr, "NOT A SET!\n");
+          mvwaddstr(messages, 0, 0, "NOT A SET");
+          wrefresh(messages);
+          wgetch(dummy);
+          for (int i=0; i<3; i++) {
+            int card_loc = candidates[i];
+            selected[card_loc] = 0;
+            draw_border(card_windows[card_loc], ' ', ' ');
+          }
+          wattron(card_windows[cur_card], COLOR_PAIR(WHITE));
+          draw_border(card_windows[cur_card], '@', '@');
+          clear_message(messages, MESSAGE_W);
         }
       }
     } else {

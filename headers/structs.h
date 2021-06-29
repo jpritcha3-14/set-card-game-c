@@ -3,6 +3,8 @@
 
 #define CARD_W 19 
 #define CARD_H 7 
+#define MESSAGE_W 2*(CARD_W+2) 
+#define SET_COUNT_W CARD_W+2 
 #define RED 1
 #define CYAN 2
 #define MAGENTA 3
