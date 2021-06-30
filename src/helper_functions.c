@@ -172,3 +172,15 @@ void get_selected_cards(int candidates[], const int selected[]) {
     } 
   } 
 }
+
+int get_set_count(int num_cards, int deck[], card_props props[]){
+  int count = 0;
+  for (int i=0; i<num_cards-2; i++) {
+    for (int j=i+1; j<num_cards-1; j++) {
+      for (int k=j+1; k<num_cards; k++) {
+        count += check_set(i, j, k, deck, props);    
+      }
+    }
+  }
+  return count;
+}

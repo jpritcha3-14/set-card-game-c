@@ -19,5 +19,6 @@ int get_shade(int card_number);
 int get_shape(int card_number);
 int check_set(int a, int b, int c, const int deck[], const card_props props[]);
 void get_selected_cards(int candidates[], const int selected[]);
+int get_set_count(int num_cards, int deck[], card_props props[]);
 
 #endif

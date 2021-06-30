@@ -11,6 +11,8 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char 
   int cur_card = 0;
   int prev_card = 0;
   char inp;
+  int sets_on_board;
+  char set_count_message[2];
 
   // Initialize deck and props
   for (int i=0; i<81; i++) {
@@ -33,8 +35,15 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char 
   wattron(card_windows[cur_card], COLOR_PAIR(WHITE));
   draw_border(card_windows[cur_card], '@', '@');
   wrefresh(card_windows[cur_card]);
+  mvwaddstr(set_count, 0, 0, "SETS ON BOARD: ");
+  wrefresh(set_count);
 
   for (;;) {
+    sets_on_board = get_set_count(12, deck, props); 
+    set_count_message[1]=' ';
+    sprintf(set_count_message, "%d", sets_on_board);
+    mvwaddstr(set_count, 0, SET_COUNT_W - 2, set_count_message);
+    wrefresh(set_count);
     inp = wgetch(dummy);
     if (inp == 'q') break;
     if (inp == ' ') {
