@@ -44,6 +44,18 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char 
     sprintf(set_count_message, "%d", sets_on_board);
     mvwaddstr(set_count, 0, SET_COUNT_W - 2, set_count_message);
     wrefresh(set_count);
+    if (sets_on_board == 0) {
+      mvwaddstr(messages, 0, 0, "SHUFFLING...");
+      wrefresh(messages);
+      wgetch(dummy);
+      shuffle(deck, max_card+1);
+      for (int i=0; i<12; i++) {
+        draw_card(card_windows[i], cards[deck[i] % 27], props[deck[i]].color);
+      }
+      continue;
+    }
+    clear_message(messages, MESSAGE_W);
+
     inp = wgetch(dummy);
     if (inp == 'q') break;
     if (inp == ' ') {
