@@ -5,8 +5,8 @@
 
 int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char cards[][CARD_H][CARD_W], WINDOW *dummy) {
   int selected[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  //int max_card = 81; 
-  int max_card = 12; 
+  int max_card = 81; 
+  //int max_card = 12; 
   int deck[81];
   card_props props[81];
   int cur_card = 0;
@@ -41,7 +41,7 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char 
   wrefresh(set_count);
 
   for (;;) {
-    sets_on_board = get_set_count(12, deck, props); 
+    sets_on_board = get_set_count(min(12, max_card), deck, props);
     set_count_message[1]=' ';
     sprintf(set_count_message, "%d", sets_on_board);
     mvwaddstr(set_count, 0, SET_COUNT_W - 2, set_count_message);
@@ -96,7 +96,7 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char 
                 draw_blank_card(card_windows[max_card + i]);
                 selected[max_card + i] = 0;
                 draw_border(card_windows[max_card + i], ' ', ' ');
-                wgetch(dummy);
+                //wgetch(dummy);
                 continue; //card to be removed is part of current set, can be skipped
               }
               int card_loc;
@@ -110,11 +110,11 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char 
               }
               int card_num = deck[card_loc];
               draw_card(card_windows[card_loc], cards[card_num % 27], props[card_num].color);
-              wgetch(dummy);
+              //wgetch(dummy);
               draw_blank_card(card_windows[max_card + i]);
               selected[card_loc] = 0;
               draw_border(card_windows[card_loc], ' ', ' ');
-              wgetch(dummy);
+              //wgetch(dummy);
             } 
           }
           wattron(card_windows[cur_card], COLOR_PAIR(WHITE));
