@@ -5,14 +5,16 @@
 
 int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char cards[][CARD_H][CARD_W], WINDOW *dummy) {
   int selected[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  int max_card = 80; 
+  //int max_card = 81; 
+  int max_card = 12; 
   int deck[81];
   card_props props[81];
   int cur_card = 0;
   int prev_card = 0;
   char inp;
   int sets_on_board;
-  char set_count_message[2];
+  char set_count_message[3];
+  set_count_message[2] ='\0';
 
   // Initialize deck and props
   for (int i=0; i<81; i++) {
@@ -45,10 +47,17 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char 
     mvwaddstr(set_count, 0, SET_COUNT_W - 2, set_count_message);
     wrefresh(set_count);
     if (sets_on_board == 0) {
+      if (max_card <= 21 && !any_set(max_card, deck, props)) {
+        clear_message(messages, MESSAGE_W);
+        mvwaddstr(messages, 0, 0, "GAME OVER, NO MORE SETS");
+        wrefresh(messages);
+        wgetch(dummy);
+        return 0;
+      }
       mvwaddstr(messages, 0, 0, "SHUFFLING...");
       wrefresh(messages);
       wgetch(dummy);
-      shuffle(deck, max_card+1);
+      shuffle(deck, max_card);
       for (int i=0; i<12; i++) {
         draw_card(card_windows[i], cards[deck[i] % 27], props[deck[i]].color);
       }
@@ -59,25 +68,57 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char 
     inp = wgetch(dummy);
     if (inp == 'q') break;
     if (inp == ' ') {
+      if (cur_card >= min(max_card, 12)) continue; // Invalid selection
       select_card(card_windows[cur_card], selected, cur_card);
       if (sum(selected, 12) == 3) {
         int candidates[3];
         get_selected_cards(candidates, selected);
-        if (check_set(candidates[0], candidates[1], candidates[2], deck, props) > 0)  {
+        if (check_set(candidates[0], candidates[1], candidates[2], deck, props) == 1)  {
+          // There is a set
           mvwaddstr(messages, 0, 0, "THAT'S A SET!");
           wrefresh(messages);
           wgetch(dummy);
-          for (int i=0; i<3; i++) {
-            int card_loc = candidates[i];
-            swap(max_card - i, card_loc, deck); 
-            int card_num = deck[card_loc];
-            draw_card(card_windows[card_loc], cards[card_num % 27], props[card_num].color);
-            selected[card_loc] = 0;
-            draw_border(card_windows[card_loc], ' ', ' ');
+          max_card -= 3;
+          if (max_card >= 12) {
+            // Just swap in 3 new cards
+            for (int i=0; i<3; i++) {
+              int card_loc = candidates[i];
+              swap(max_card + i, card_loc, deck); 
+              int card_num = deck[card_loc];
+              draw_card(card_windows[card_loc], cards[card_num % 27], props[card_num].color);
+              selected[card_loc] = 0;
+              draw_border(card_windows[card_loc], ' ', ' ');
+            }
+          } else {
+            // Have to deal with fewer than 12 cards left
+            for (int i=0; i<3; i++) {
+              if (in_set(max_card + i, candidates)) {
+                draw_blank_card(card_windows[max_card + i]);
+                selected[max_card + i] = 0;
+                draw_border(card_windows[max_card + i], ' ', ' ');
+                wgetch(dummy);
+                continue; //card to be removed is part of current set, can be skipped
+              }
+              int card_loc;
+              for (int j=0; j<3; j++) {
+                if (candidates[j] < max_card) {
+                  swap(max_card + i, candidates[j], deck); 
+                  card_loc = candidates[j];
+                  candidates[j] = 99;
+                  break;
+                }
+              }
+              int card_num = deck[card_loc];
+              draw_card(card_windows[card_loc], cards[card_num % 27], props[card_num].color);
+              wgetch(dummy);
+              draw_blank_card(card_windows[max_card + i]);
+              selected[card_loc] = 0;
+              draw_border(card_windows[card_loc], ' ', ' ');
+              wgetch(dummy);
+            } 
           }
           wattron(card_windows[cur_card], COLOR_PAIR(WHITE));
           draw_border(card_windows[cur_card], '@', '@');
-          max_card -= 3;
           clear_message(messages, MESSAGE_W);
         } else {
           mvwaddstr(messages, 0, 0, "NOT A SET");

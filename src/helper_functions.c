@@ -9,6 +9,10 @@ void swap(int a, int b, int arr[]) {
   arr[a] = temp;
 }
 
+int min(int a, int b) {
+  return (a < b) ? a : b;
+}
+
 int sum(int arr[], int n) {
   int total = 0;
   for (int i=0; i<n; i++) {
@@ -62,6 +66,15 @@ void draw_card(WINDOW *card_window, char card[][CARD_W], int color) {
   //fprintf(stderr, "%d\n", color);
   for (int i=0; i<CARD_H; i++) {
     mvwaddstr(card_window, i+1, 1, card[i]);
+  }
+  wrefresh(card_window); // flush to screen
+}
+
+void draw_blank_card(WINDOW *card_window) {
+  for (int i=0; i<CARD_H; i++) {
+    for (int j=0; j<CARD_W; j++) {
+      mvwaddch(card_window, i+1, j+1, ' ');
+    }
   }
   wrefresh(card_window); // flush to screen
 }
@@ -173,7 +186,7 @@ void get_selected_cards(int candidates[], const int selected[]) {
   } 
 }
 
-int get_set_count(int num_cards, int deck[], card_props props[]){
+int get_set_count(int num_cards, int deck[], card_props props[]) {
   int count = 0;
   for (int i=0; i<num_cards-2; i++) {
     for (int j=i+1; j<num_cards-1; j++) {
@@ -184,3 +197,23 @@ int get_set_count(int num_cards, int deck[], card_props props[]){
   }
   return count;
 }
+
+int any_set(int num_cards, int deck[], card_props props[]) {
+  for (int i=0; i<num_cards-2; i++) {
+    for (int j=i+1; j<num_cards-1; j++) {
+      for (int k=j+1; k<num_cards; k++) {
+        if(check_set(i, j, k, deck, props)) {
+          return 1; 
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+int in_set(int num, int set[]) {
+  for (int i=0; i<3; i++) {
+    if (set[i] == num) return 1;
+  }
+  return 0;
+} 

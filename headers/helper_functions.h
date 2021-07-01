@@ -4,9 +4,11 @@
 #include "structs.h"
 
 void swap(int a, int b, int arr[]);
+int min(int a, int b);
 void clear_message(WINDOW* window, int length);
 void load_cards(char cards[][CARD_H][CARD_W], char *filename);
 void draw_card(WINDOW *card_window, char card[][CARD_W], int color);
+void draw_blank_card(WINDOW *card_window);
 void draw_border(WINDOW *card_window, char top, char side);
 int move_cursor(WINDOW* card_windows[], int selected[], int inp, int cur_card);
 void select_card(WINDOW *card_window, int slected[], int cur_card);
@@ -20,5 +22,7 @@ int get_shape(int card_number);
 int check_set(int a, int b, int c, const int deck[], const card_props props[]);
 void get_selected_cards(int candidates[], const int selected[]);
 int get_set_count(int num_cards, int deck[], card_props props[]);
+int any_set(int num_cards, int deck[], card_props props[]);
+int in_set(int num, int set[]);
 
 #endif
