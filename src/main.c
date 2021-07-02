@@ -9,7 +9,7 @@
 
 int main() {
     WINDOW *card_windows[12];
-    WINDOW *messages, *set_count;
+    WINDOW *messages, *card_count, *set_count;
     char cards[27][CARD_H][CARD_W];
     int wrows, wcols, gamew, gameh, tlcornerx, tlcornery;
     srand(time(0));
@@ -42,6 +42,7 @@ int main() {
     tlcornery = (wrows - gameh) / 2;
     //fprintf(stderr, "%d %d\n", tlcornerx, tlcornery);
     messages = newwin(1, MESSAGE_W, tlcornery-1, tlcornerx);
+    card_count = newwin(1, SET_COUNT_W, tlcornery-1, tlcornerx + 2*(CARD_W+2));
     set_count = newwin(1, SET_COUNT_W, tlcornery-1, tlcornerx + 3*(CARD_W+2));
     wattron(messages, COLOR_PAIR(WHITE));
     wattron(set_count, COLOR_PAIR(WHITE));
@@ -50,7 +51,7 @@ int main() {
       card_windows[i] = newwin(CARD_H+2, CARD_W+2, tlcornery + (i / 4) * (CARD_H + 2), tlcornerx + (i % 4) * (CARD_W + 2));
     }
    
-    play_game(card_windows, messages, set_count, cards, dummy);
+    play_game(card_windows, messages, card_count, set_count, cards, dummy);
     endwin();
     return EXIT_SUCCESS;
 }

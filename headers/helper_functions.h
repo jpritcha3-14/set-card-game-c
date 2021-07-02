@@ -5,6 +5,7 @@
 
 void swap(int a, int b, int arr[]);
 int min(int a, int b);
+int max(int a, int b);
 void clear_message(WINDOW* window, int length);
 void load_cards(char cards[][CARD_H][CARD_W], char *filename);
 void draw_card(WINDOW *card_window, char card[][CARD_W], int color);

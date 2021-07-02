@@ -3,10 +3,10 @@
 #include "helper_functions.h"
 #include "structs.h"
 
-int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char cards[][CARD_H][CARD_W], WINDOW *dummy) {
+int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WINDOW* set_count, char cards[][CARD_H][CARD_W], WINDOW *dummy) {
   int selected[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int max_card = 81; 
-  //int max_card = 12; 
+  //int max_card = 24; 
   int deck[81];
   card_props props[81];
   int cur_card = 0;
@@ -14,7 +14,7 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char 
   char inp;
   int sets_on_board;
   char set_count_message[3];
-  set_count_message[2] ='\0';
+  char card_count_message[3];
 
   // Initialize deck and props
   for (int i=0; i<81; i++) {
@@ -38,14 +38,19 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* set_count, char 
   draw_border(card_windows[cur_card], '@', '@');
   wrefresh(card_windows[cur_card]);
   mvwaddstr(set_count, 0, 0, "SETS ON BOARD: ");
+  mvwaddstr(card_count, 0, 0, "CARDS IN DECK: ");
   wrefresh(set_count);
+  wrefresh(card_count);
 
   for (;;) {
     sets_on_board = get_set_count(min(12, max_card), deck, props);
-    set_count_message[1]=' ';
-    sprintf(set_count_message, "%d", sets_on_board);
-    mvwaddstr(set_count, 0, SET_COUNT_W - 2, set_count_message);
+    sprintf(set_count_message, "%2d", sets_on_board);
+    mvwaddstr(set_count, 0, SET_COUNT_W - 6, set_count_message);
     wrefresh(set_count);
+    sprintf(card_count_message, "%2d", max(max_card - 12, 0));
+    mvwaddstr(card_count, 0, SET_COUNT_W - 6, card_count_message);
+    wrefresh(card_count);
+
     if (sets_on_board == 0) {
       if (max_card <= 21 && !any_set(max_card, deck, props)) {
         clear_message(messages, MESSAGE_W);
