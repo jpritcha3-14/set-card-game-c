@@ -11,10 +11,12 @@ int main() {
     WINDOW *card_windows[12];
     WINDOW *messages, *card_count, *set_count;
     char cards[27][CARD_H][CARD_W];
+    char logo[3][LOGO_LETTER_H][LOGO_LETTER_W];
     int wrows, wcols, gamew, gameh, tlcornerx, tlcornery;
     srand(time(0));
 
     load_cards(cards, "assets/cards.txt");
+    load_logo(logo, "assets/logo.txt");
 
     initscr();
     noecho();
@@ -40,6 +42,8 @@ int main() {
     };
     tlcornerx = (wcols - gamew) / 2;
     tlcornery = (wrows - gameh) / 2;
+
+    WINDOW* logo_window = newwin(LOGO_LETTER_H, LOGO_LETTER_W*3, tlcornery, tlcornerx + LOGO_LETTER_W*3/2); 
     //fprintf(stderr, "%d %d\n", tlcornerx, tlcornery);
     messages = newwin(1, MESSAGE_W, tlcornery-1, tlcornerx);
     card_count = newwin(1, SET_COUNT_W, tlcornery-1, tlcornerx + 2*(CARD_W+2));
@@ -51,6 +55,8 @@ int main() {
       card_windows[i] = newwin(CARD_H+2, CARD_W+2, tlcornery + (i / 4) * (CARD_H + 2), tlcornerx + (i % 4) * (CARD_W + 2));
     }
    
+    draw_logo(logo_window, logo);
+    wgetch(dummy);
     play_game(card_windows, messages, card_count, set_count, cards, dummy);
     endwin();
     return EXIT_SUCCESS;

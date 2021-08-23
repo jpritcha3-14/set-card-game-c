@@ -3,6 +3,8 @@
 
 #define CARD_W 19 
 #define CARD_H 7 
+#define LOGO_LETTER_W 14 
+#define LOGO_LETTER_H 8 
 #define MESSAGE_W 2*(CARD_W+2) 
 #define SET_COUNT_W CARD_W+2 
 #define RED 1

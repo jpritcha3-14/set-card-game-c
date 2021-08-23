@@ -32,6 +32,23 @@ void clear_message(WINDOW* window, int length) {
   wrefresh(window);
 }
 
+void load_logo(char logo_letters[][LOGO_LETTER_H][LOGO_LETTER_W], char* filename) {
+  FILE* fp;
+  char garbage[10];
+  fp = fopen(filename, "r");
+  for (int i=0; i<3; i++) {
+    for (int j=0; j<LOGO_LETTER_H; j++) {
+      fgets(logo_letters[i][j], LOGO_LETTER_W+1, fp);   
+
+      // replace '$' with null terminator
+      logo_letters[i][j][LOGO_LETTER_W-1]='\0';
+      // move fp past newline
+      fgets(garbage, LOGO_LETTER_W, fp);   
+    } 
+  }
+  fclose(fp);
+}
+
 void load_cards(char cards[][CARD_H][CARD_W], char* filename) {
   FILE* fp;
   char garbage[10];
@@ -67,11 +84,20 @@ int get_shape(int card_number) {
 
 void draw_card(WINDOW *card_window, char card[][CARD_W], int color) {
   wattron(card_window, COLOR_PAIR(color));
-  //fprintf(stderr, "%d\n", color);
   for (int i=0; i<CARD_H; i++) {
     mvwaddstr(card_window, i+1, 1, card[i]);
   }
   wrefresh(card_window); // flush to screen
+}
+
+void draw_logo(WINDOW *logo_window, char logo[][LOGO_LETTER_H][LOGO_LETTER_W]) {
+  for (int i=0; i<3; i++) {
+    wattron(logo_window, COLOR_PAIR(i+1));
+    for (int j=0; j<LOGO_LETTER_H; j++) {
+        mvwaddstr(logo_window, j, i*LOGO_LETTER_W+1, logo[i][j]);
+    }
+  }
+  wrefresh(logo_window); // flush to screen
 }
 
 void draw_blank_card(WINDOW *card_window) {
