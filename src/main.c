@@ -5,6 +5,7 @@
 
 #include "helper_functions.h" 
 #include "structs.h"
+#include "menu.h"
 #include "set.h"
 
 int main() {
@@ -44,6 +45,8 @@ int main() {
     tlcornery = (wrows - gameh) / 2;
 
     WINDOW* logo_window = newwin(LOGO_LETTER_H, LOGO_LETTER_W*3, tlcornery, tlcornerx + LOGO_LETTER_W*3/2); 
+    WINDOW* menu_window = newwin(LOGO_LETTER_H, LOGO_LETTER_W*3, tlcornery+LOGO_LETTER_H, tlcornerx + LOGO_LETTER_W*3/2); 
+    Option menu_selection;
     //fprintf(stderr, "%d %d\n", tlcornerx, tlcornery);
     messages = newwin(1, MESSAGE_W, tlcornery-1, tlcornerx);
     card_count = newwin(1, SET_COUNT_W, tlcornery-1, tlcornerx + 2*(CARD_W+2));
@@ -56,8 +59,10 @@ int main() {
     }
    
     draw_logo(logo_window, logo);
-    wgetch(dummy);
-    play_game(card_windows, messages, card_count, set_count, cards, dummy);
+    menu_selection = show_menu(menu_window);
+    if (menu_selection == start) {
+      play_game(card_windows, messages, card_count, set_count, cards, dummy);
+    }
     endwin();
     return EXIT_SUCCESS;
 }
