@@ -1,9 +1,15 @@
 #include <stdio.h> 
+#include <pthread.h>
 
 #include "helper_functions.h"
+#include "timer.h"
 #include "structs.h"
 
-int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WINDOW* set_count, char cards[][CARD_H][CARD_W], WINDOW *dummy) {
+int signal_done = 0;
+pthread_mutex_t lock;
+
+int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WINDOW* set_count, WINDOW *timer_window, char cards[][CARD_H][CARD_W], WINDOW *dummy) {
+  pthread_t thread_id;
   int selected[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int max_card = 81; 
   //int max_card = 24; 
@@ -42,14 +48,19 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WIND
   wrefresh(set_count);
   wrefresh(card_count);
 
+  // start timer
+  pthread_create(&thread_id, NULL, thread_timer_function, timer_window);
+
   for (;;) {
     sets_on_board = get_set_count(min(12, max_card), deck, props);
     sprintf(set_count_message, "%2d", sets_on_board);
+    sprintf(card_count_message, "%2d", max(max_card - 12, 0));
+    pthread_mutex_lock(&lock);
     mvwaddstr(set_count, 0, SET_COUNT_W - 6, set_count_message);
     wrefresh(set_count);
-    sprintf(card_count_message, "%2d", max(max_card - 12, 0));
     mvwaddstr(card_count, 0, SET_COUNT_W - 6, card_count_message);
     wrefresh(card_count);
+    pthread_mutex_unlock(&lock);
 
     if (sets_on_board == 0) {
       if (max_card <= 21 && !any_set(max_card, deck, props)) {
@@ -144,5 +155,12 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WIND
       cur_card = move_cursor(card_windows, selected, inp, prev_card);
     }
   }
+  
+  // stop timer
+  pthread_mutex_lock(&lock);
+  signal_done = 1;
+  pthread_mutex_unlock(&lock);
+  pthread_join(thread_id, NULL);
+
   return 0;
 }
