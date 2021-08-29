@@ -9,7 +9,6 @@
 
 int signal_done = 0;
 int seconds_elapsed;
-bool finished_game = false;
 extern pthread_mutex_t lock;
 
 void stop_timer(pthread_t tid) {
@@ -23,8 +22,8 @@ void stop_timer(pthread_t tid) {
 int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WINDOW* set_count, WINDOW *timer_window, char cards[][CARD_H][CARD_W], WINDOW *dummy) {
   pthread_t thread_id;
   int selected[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  int max_card = 81; 
-  //int max_card = 24; 
+  int max_card = 81;
+  //int max_card = 12;
   int deck[81];
   card_props props[81];
   int cur_card = 0;
@@ -33,6 +32,7 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WIND
   int sets_on_board;
   char set_count_message[3];
   char card_count_message[3];
+  bool finished_game = false;
 
   // Initialize deck and props
   for (int i=0; i<81; i++) {

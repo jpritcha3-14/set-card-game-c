@@ -40,7 +40,7 @@ void create_db(const char* filename) {
 void show_leaderboard(WINDOW* lbw, WINDOW* dummy) {
     wattron(lbw, A_BOLD);
     wattron(lbw, COLOR_PAIR(1));
-    mvwaddstr(lbw, 0, 0, "Leaderboard");
+    mvwaddstr(lbw, 0, 6, "Leaderboard");
 
     wattron(lbw, COLOR_PAIR(2));
     mvwaddstr(lbw, 2, 3, "Name");
@@ -49,7 +49,8 @@ void show_leaderboard(WINDOW* lbw, WINDOW* dummy) {
     sqlite3 *db;
     sqlite3_stmt *res;
     sqlite3_stmt *table_res;
-    int row = 3;
+    int row;
+    int cur_time;
     char table[] = "times";
 
     // Open db connection
@@ -74,10 +75,12 @@ void show_leaderboard(WINDOW* lbw, WINDOW* dummy) {
 
     // Print all returned rows
     char buff[10];
+    row = 3;
     while(sqlite3_step(res) == SQLITE_ROW) {
         wattron(lbw, COLOR_PAIR((row + 1) % 2 + 1));
         strcpy(buff, "");
-        sprintf(buff, "%d", sqlite3_column_int(res, 1));
+        cur_time = sqlite3_column_int(res, 1);
+        sprintf(buff, "%02d:%02d:%02d", cur_time / 3600, cur_time / 60, cur_time % 60);
         mvwaddstr(lbw, row, 3, (const char*)sqlite3_column_text(res, 0));
         mvwaddstr(lbw, row, 15, buff);
         row += 1;
@@ -88,6 +91,7 @@ void show_leaderboard(WINDOW* lbw, WINDOW* dummy) {
 
     wrefresh(lbw); // Show printed scores 
     wgetch(dummy); // Wait for user input to return to menu
+    werase(lbw);
     clear_screen();
     return;
 }
@@ -123,6 +127,8 @@ void add_leaderboard_time(WINDOW* lbw, int time) {
         noecho();
     }
     free(rt);
+    werase(lbw);
+    clear_screen();
 }
 
 int get_num_entries(const char* table) {

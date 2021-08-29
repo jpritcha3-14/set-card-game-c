@@ -23,6 +23,7 @@ void *thread_timer_function(void *timer_window) {
 
   seconds_elapsed = 0;
   int diff = 0;
+  nanosleep(&wait, NULL); //wait for initial screen draw
 
   pthread_mutex_lock(&lock);
   mvwaddstr(my_window, 0, 0, "00:00");
