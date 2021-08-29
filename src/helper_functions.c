@@ -1,7 +1,10 @@
 #include <stdlib.h>
 #include <ncurses.h>
+#include <pthread.h>
 
 #include "structs.h"
+
+extern pthread_mutex_t lock;
 
 void swap(int a, int b, int arr[]) {
   int temp = arr[b];
@@ -26,10 +29,13 @@ int sum(int arr[], int n) {
 }
 
 void clear_message(WINDOW* window, int length) {
+  pthread_mutex_lock(&lock);
   for (int i=0; i<length; i++) {
     mvwaddch(window, 0, i, ' ');
   }
   wrefresh(window);
+  pthread_mutex_unlock(&lock);
+  return;
 }
 
 void load_logo(char logo_letters[][LOGO_LETTER_H][LOGO_LETTER_W], char* filename) {
@@ -83,14 +89,17 @@ int get_shape(int card_number) {
 }
 
 void draw_card(WINDOW *card_window, char card[][CARD_W], int color) {
+  pthread_mutex_lock(&lock);
   wattron(card_window, COLOR_PAIR(color));
   for (int i=0; i<CARD_H; i++) {
     mvwaddstr(card_window, i+1, 1, card[i]);
   }
   wrefresh(card_window); // flush to screen
+  pthread_mutex_unlock(&lock);
 }
 
 void draw_logo(WINDOW *logo_window, char logo[][LOGO_LETTER_H][LOGO_LETTER_W]) {
+  pthread_mutex_lock(&lock);
   for (int i=0; i<3; i++) {
     wattron(logo_window, COLOR_PAIR(i+1));
     for (int j=0; j<LOGO_LETTER_H; j++) {
@@ -98,18 +107,22 @@ void draw_logo(WINDOW *logo_window, char logo[][LOGO_LETTER_H][LOGO_LETTER_W]) {
     }
   }
   wrefresh(logo_window); // flush to screen
+  pthread_mutex_unlock(&lock);
 }
 
 void draw_blank_card(WINDOW *card_window) {
+  pthread_mutex_lock(&lock);
   for (int i=0; i<CARD_H; i++) {
     for (int j=0; j<CARD_W; j++) {
       mvwaddch(card_window, i+1, j+1, ' ');
     }
   }
   wrefresh(card_window); // flush to screen
+  pthread_mutex_unlock(&lock);
 }
 
 void draw_border(WINDOW *card_window, char top, char side) {
+  pthread_mutex_lock(&lock);
   for (int i=0; i<CARD_H+2; i++) {
     if (i == 0 || i == CARD_H+1) {
       // Top and bottom
@@ -123,6 +136,7 @@ void draw_border(WINDOW *card_window, char top, char side) {
     }
   }
   wrefresh(card_window); // flush to screen
+  pthread_mutex_unlock(&lock);
 }
 
 int move_cursor(WINDOW* card_windows[], int selected[], int inp, int cur_card) {
@@ -154,8 +168,10 @@ int move_cursor(WINDOW* card_windows[], int selected[], int inp, int cur_card) {
     wattron(card_windows[cur_card], COLOR_PAIR(WHITE));
     draw_border(card_windows[cur_card], ' ', ' ');
   }
+  pthread_mutex_lock(&lock);
   wrefresh(card_windows[cur_card]);
   wrefresh(card_windows[next_card]);
+  pthread_mutex_unlock(&lock);
   return next_card;  
 }
 
@@ -170,7 +186,9 @@ void select_card(WINDOW *card_window, int selected[], int cur_card) {
     }
   }
   draw_border(card_window, '@', '@');
+  pthread_mutex_lock(&lock);
   wrefresh(card_window);
+  pthread_mutex_unlock(&lock);
 }
 
 void shuffle(int cards[], int n) {
@@ -247,3 +265,11 @@ int in_set(int num, int set[]) {
   }
   return 0;
 } 
+
+void clear_screen() {
+  pthread_mutex_lock(&lock);
+  werase(stdscr);
+  wrefresh(stdscr);
+  pthread_mutex_unlock(&lock);
+  return;
+}

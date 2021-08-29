@@ -1,19 +1,30 @@
 #include <ncurses.h>
+#include <pthread.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <limits.h>
 
 #include "helper_functions.h" 
 #include "structs.h"
 #include "menu.h"
 #include "set.h"
+#include "leaderboard.h" 
+
+#if !defined(DATABASEPATH)
+const char DBPATH[] = "/usr/local/share/snake-game/assets/leaderbaord.db";
+#else
+const char DBPATH[] = DATABASEPATH;
+#endif
+
+pthread_mutex_t lock;
 
 int main() {
     WINDOW *card_windows[12];
     WINDOW *messages, *card_count, *set_count, *timer;
     char cards[27][CARD_H][CARD_W];
     char logo[3][LOGO_LETTER_H][LOGO_LETTER_W];
-    int wrows, wcols, gamew, gameh, tlcornerx, tlcornery;
+    int wrows, wcols, gamew, gameh, tlcornerx, tlcornery, final_time;
     srand(time(0));
 
     load_cards(cards, "assets/cards.txt");
@@ -46,6 +57,7 @@ int main() {
 
     WINDOW* logo_window = newwin(LOGO_LETTER_H, LOGO_LETTER_W*3, tlcornery, tlcornerx + LOGO_LETTER_W*3/2); 
     WINDOW* menu_window = newwin(LOGO_LETTER_H, LOGO_LETTER_W*3, tlcornery+LOGO_LETTER_H, tlcornerx + LOGO_LETTER_W*3/2); 
+    WINDOW* leaderboard_window = newwin(LOGO_LETTER_H*2, LOGO_LETTER_W*3, tlcornery, tlcornerx + LOGO_LETTER_W*3/2); 
     Option menu_selection;
     //fprintf(stderr, "%d %d\n", tlcornerx, tlcornery);
     messages = newwin(1, MESSAGE_W, tlcornery-1, tlcornerx);
@@ -60,10 +72,16 @@ int main() {
       card_windows[i] = newwin(CARD_H+2, CARD_W+2, tlcornery + (i / 4) * (CARD_H + 2), tlcornerx + (i % 4) * (CARD_W + 2));
     }
    
-    draw_logo(logo_window, logo);
-    menu_selection = show_menu(menu_window);
-    if (menu_selection == start) {
-      play_game(card_windows, messages, card_count, set_count, timer, cards, dummy);
+    for (;;) {
+      draw_logo(logo_window, logo);
+      menu_selection = show_menu(menu_window);
+      clear_screen();
+      if (menu_selection == start) {
+        final_time = play_game(card_windows, messages, card_count, set_count, timer, cards, dummy);
+        if (final_time < INT_MAX) add_leaderboard_time(leaderboard_window, final_time);
+      } else if (menu_selection == leaderboard) {
+        show_leaderboard(leaderboard_window, dummy); 
+      } else if (menu_selection == quit) break;
     }
     endwin();
     return EXIT_SUCCESS;

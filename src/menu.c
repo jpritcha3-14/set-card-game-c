@@ -14,6 +14,7 @@ const char *menu_option_text[] = {
 };
 
 void draw_menu(WINDOW *menu_window) {
+  wattron(menu_window, COLOR_PAIR(WHITE));
   int num_options = (int)(sizeof(menu_option_text)/sizeof(menu_option_text[0]));
   int start;
   for (int i=0; i<num_options; i++) { 

@@ -22,6 +22,6 @@ typedef struct card_props {
   int shape;
 } card_props;
 
-typedef enum Option { start, how_to_play, highscore, quit } Option;
+typedef enum Option { start, how_to_play, leaderboard, quit } Option;
 
 #endif

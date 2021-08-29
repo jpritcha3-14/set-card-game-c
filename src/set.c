@@ -1,12 +1,24 @@
 #include <stdio.h> 
 #include <pthread.h>
+#include <limits.h>
+#include <stdbool.h>
 
 #include "helper_functions.h"
 #include "timer.h"
 #include "structs.h"
 
 int signal_done = 0;
-pthread_mutex_t lock;
+int seconds_elapsed;
+bool finished_game = false;
+extern pthread_mutex_t lock;
+
+void stop_timer(pthread_t tid) {
+  // stop timer
+  pthread_mutex_lock(&lock);
+  signal_done = 1;
+  pthread_mutex_unlock(&lock);
+  pthread_join(tid, NULL);
+}
 
 int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WINDOW* set_count, WINDOW *timer_window, char cards[][CARD_H][CARD_W], WINDOW *dummy) {
   pthread_t thread_id;
@@ -42,11 +54,13 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WIND
   // draw cursor start
   wattron(card_windows[cur_card], COLOR_PAIR(WHITE));
   draw_border(card_windows[cur_card], '@', '@');
+  pthread_mutex_lock(&lock);
   wrefresh(card_windows[cur_card]);
   mvwaddstr(set_count, 0, 0, "SETS ON BOARD: ");
   mvwaddstr(card_count, 0, 0, "CARDS IN DECK: ");
   wrefresh(set_count);
   wrefresh(card_count);
+  pthread_mutex_unlock(&lock);
 
   // start timer
   pthread_create(&thread_id, NULL, thread_timer_function, timer_window);
@@ -64,14 +78,18 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WIND
 
     if (sets_on_board == 0) {
       if (max_card <= 21 && !any_set(max_card, deck, props)) {
+        stop_timer(thread_id);
+        finished_game = true;
         clear_message(messages, MESSAGE_W);
         mvwaddstr(messages, 0, 0, "GAME OVER, NO MORE SETS");
         wrefresh(messages);
         wgetch(dummy);
-        return 0;
+        break;
       }
+      pthread_mutex_lock(&lock);
       mvwaddstr(messages, 0, 0, "SHUFFLING...");
       wrefresh(messages);
+      pthread_mutex_unlock(&lock);
       wgetch(dummy);
       shuffle(deck, max_card);
       for (int i=0; i<12; i++) {
@@ -82,7 +100,10 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WIND
     clear_message(messages, MESSAGE_W);
 
     inp = wgetch(dummy);
-    if (inp == 'q') break;
+    if (inp == 'q') {
+      stop_timer(thread_id);
+      break;
+    };
     if (inp == ' ') {
       if (cur_card >= min(max_card, 12)) continue; // Invalid selection
       select_card(card_windows[cur_card], selected, cur_card);
@@ -91,8 +112,11 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WIND
         get_selected_cards(candidates, selected);
         if (check_set(candidates[0], candidates[1], candidates[2], deck, props) == 1)  {
           // There is a set
+
+          pthread_mutex_lock(&lock);
           mvwaddstr(messages, 0, 0, "THAT'S A SET!");
           wrefresh(messages);
+          pthread_mutex_unlock(&lock);
           wgetch(dummy);
           max_card -= 3;
           if (max_card >= 12) {
@@ -137,8 +161,10 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WIND
           draw_border(card_windows[cur_card], '@', '@');
           clear_message(messages, MESSAGE_W);
         } else {
+          pthread_mutex_lock(&lock);
           mvwaddstr(messages, 0, 0, "NOT A SET");
           wrefresh(messages);
+          pthread_mutex_unlock(&lock);
           wgetch(dummy);
           for (int i=0; i<3; i++) {
             int card_loc = candidates[i];
@@ -155,12 +181,7 @@ int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WIND
       cur_card = move_cursor(card_windows, selected, inp, prev_card);
     }
   }
-  
-  // stop timer
-  pthread_mutex_lock(&lock);
-  signal_done = 1;
-  pthread_mutex_unlock(&lock);
-  pthread_join(thread_id, NULL);
 
-  return 0;
+  clear_screen();
+  return finished_game ? seconds_elapsed : INT_MAX; 
 }

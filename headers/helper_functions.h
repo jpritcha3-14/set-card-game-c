@@ -15,6 +15,7 @@ void draw_blank_card(WINDOW *card_window);
 void draw_border(WINDOW *card_window, char top, char side);
 int move_cursor(WINDOW* card_windows[], int selected[], int inp, int cur_card);
 void select_card(WINDOW *card_window, int slected[], int cur_card);
+void clear_screen();
 
 int sum(int arr[], int n);
 void shuffle(int cards[], int n);

@@ -10,6 +10,7 @@
 #include "structs.h"
 
 extern int signal_done;
+extern int seconds_elapsed;
 extern pthread_mutex_t lock;
 
 void *thread_timer_function(void *timer_window) {
@@ -18,19 +19,25 @@ void *thread_timer_function(void *timer_window) {
   struct timespec wait;
   wait.tv_sec = 0;
   wait.tv_nsec = 50000000L;
+  time_t start_time, cur_time;
 
-  int seconds_elapsed = 0;
+  seconds_elapsed = 0;
   int diff = 0;
+
   pthread_mutex_lock(&lock);
   mvwaddstr(my_window, 0, 0, "00:00");
   wrefresh(my_window);
   pthread_mutex_unlock(&lock);
-  time_t start_time, cur_time;
+
   time(&start_time);
 
   for (;;) {
     pthread_mutex_lock(&lock);
-    if (signal_done == 1) break;
+    if (signal_done == 1) {
+      signal_done = 0;
+      pthread_mutex_unlock(&lock);
+      break;
+    }
     pthread_mutex_unlock(&lock);
 
     time(&cur_time);
