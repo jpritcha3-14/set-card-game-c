@@ -1,7 +1,7 @@
 # SET
 The SET card game implemented in C using ncurses to draw the game in a terminal, pthreads to add a timer, and sqlite3 for a leaderboard so you can see your fastest 10 times solving the deck, or compete with friends on the same machine.  For details on how to play SET, or to play SET in your browser, see [my other implementation of SET in JavaScript](https://github.com/jpritcha3-14/set-card-game).
 
-![menu png](https://github.com/jpritcha3-14/set-card-game-c/blob/master/assets/menu.png) ![game png](https://github.com/jpritcha3-14/set-card-game-c/blob/master/assets/game.png)
+![title png](https://github.com/jpritcha3-14/set-card-game-c/blob/master/assets/title.png) ![game png](https://github.com/jpritcha3-14/set-card-game-c/blob/master/assets/game.png)
 
 ## Install
 The game requires ncurses and sqlite3 which are available on most any Unix-like system.  To install them on a Debian based distro use: ```sudo apt-get install libncurses5-dev libncursesw5-dev sqlite3 libsqlite3-dev```
@@ -39,4 +39,4 @@ sudo make clean
 
 #### Leaderboard 
 - Enter a name of up to 10 characters and then press enter to save the leaderboard time and return to the menu
-- Press any key to return to the menu when viewing high scores
+- Press any key to return to the menu when viewing the leaderboard 
