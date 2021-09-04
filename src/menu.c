@@ -8,7 +8,6 @@ const char* CURSOR_END = "<<<";
 
 const char *menu_option_text[] = {
   "Start",
-  "How To Play",
   "Leaderboard",
   "Quit"
 };

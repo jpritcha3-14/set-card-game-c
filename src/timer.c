@@ -26,7 +26,7 @@ void *thread_timer_function(void *timer_window) {
   nanosleep(&wait, NULL); //wait for initial screen draw
 
   pthread_mutex_lock(&lock);
-  mvwaddstr(my_window, 0, 0, "00:00");
+  mvwaddstr(my_window, 0, 0, "00:00:00");
   wrefresh(my_window);
   pthread_mutex_unlock(&lock);
 
@@ -46,7 +46,7 @@ void *thread_timer_function(void *timer_window) {
 
     if (diff > seconds_elapsed) {
       seconds_elapsed = diff; 
-      snprintf(display_time, 20, "%02d:%02d", seconds_elapsed / 60, seconds_elapsed % 60);
+      snprintf(display_time, 20, "%02d:%02d:%02d", seconds_elapsed / 3600, seconds_elapsed / 60, seconds_elapsed % 60);
       pthread_mutex_lock(&lock);
       mvwaddstr(my_window, 0, 0, display_time);
       wrefresh(my_window);

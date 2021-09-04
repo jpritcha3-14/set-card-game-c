@@ -22,8 +22,8 @@ void stop_timer(pthread_t tid) {
 int play_game(WINDOW *card_windows[], WINDOW* messages, WINDOW* card_count, WINDOW* set_count, WINDOW *timer_window, char cards[][CARD_H][CARD_W], WINDOW *dummy) {
   pthread_t thread_id;
   int selected[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  int max_card = 81;
-  //int max_card = 12;
+  //int max_card = 81;
+  int max_card = 12;
   int deck[81];
   card_props props[81];
   int cur_card = 0;

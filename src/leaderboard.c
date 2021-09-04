@@ -107,16 +107,19 @@ void add_leaderboard_time(WINDOW* lbw, int time) {
         echo(); // Show input
         curs_set(2); // Show cursor
         char lb_msg[32];
-        sprintf(lb_msg, "New Leaderboard Time: %02d:%02d:%02d", time / 3600, time / 60, time % 60);
         char prompt[] = "Enter your name";
         char name[11];
+        sprintf(lb_msg, "New Leaderboard Time:");
         wattron(lbw, COLOR_PAIR(1));
         mvwprintw(lbw, 0, 0, lb_msg);
+        sprintf(lb_msg, "%02d:%02d:%02d             ", time / 3600, time / 60, time % 60);
         wattron(lbw, COLOR_PAIR(2));
-        mvwprintw(lbw, 2, 0, prompt);
+        mvwprintw(lbw, 1, 0, lb_msg);
+        wattron(lbw, COLOR_PAIR(1));
+        mvwprintw(lbw, 3, 0, prompt);
         wattroff(lbw, COLOR_PAIR);
         wattron(lbw, A_BOLD);
-        wmove(lbw, 3, 0);
+        wmove(lbw, 4, 0);
         wgetnstr(lbw, name, 10); // Put input into name
         if (entries < 10) {
             append_leaderboard_time(table, name, time);
