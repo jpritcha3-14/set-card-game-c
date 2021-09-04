@@ -12,7 +12,7 @@
 #include "leaderboard.h" 
 
 #if !defined(DATABASEPATH)
-const char DBPATH[] = "/usr/local/share/snake-game/assets/leaderbaord.db";
+const char DBPATH[] = "/usr/local/share/set-game/assets/leaderbaord.db";
 #else
 const char DBPATH[] = DATABASEPATH;
 #endif
