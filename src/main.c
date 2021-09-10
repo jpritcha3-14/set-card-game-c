@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <limits.h>
+#include <string.h>
 
 #include "helper_functions.h" 
 #include "structs.h"
@@ -11,11 +12,13 @@
 #include "set.h"
 #include "leaderboard.h" 
 
-#if !defined(DATABASEPATH)
-const char DBPATH[] = "/usr/local/share/set-game/assets/leaderbaord.db";
+#if !defined(BASEPATH)
+const char ASSETPATH[] = "/usr/local/share/set-game/assets/";
 #else
-const char DBPATH[] = DATABASEPATH;
+const char ASSETPATH[] = BASEPATH;
 #endif
+
+char DBPATH[100];
 
 pthread_mutex_t lock;
 
@@ -27,8 +30,17 @@ int main() {
     int wrows, wcols, gamew, gameh, tlcornerx, tlcornery, final_time;
     srand(time(0));
 
-    load_cards(cards, "assets/cards.txt");
-    load_logo(logo, "assets/logo.txt");
+    char logo_path[100];
+    char card_path[100];
+    strcpy(logo_path, ASSETPATH);
+    strcpy(card_path, ASSETPATH);
+    strcpy(DBPATH, ASSETPATH);
+    strcat(logo_path, "logo.txt");
+    strcat(card_path, "cards.txt");
+    strcat(DBPATH, "leaderboard.db");
+
+    load_cards(cards, card_path);
+    load_logo(logo, logo_path);
 
     initscr();
     noecho();
